@@ -1,14 +1,14 @@
 var express = require('express');
 var app = express();
+var parseServerLocation = "http://localhost";
+var parserServerPort = ":1337";
+var userRepository = require("./user.js");
 
 app.get('/', function(req, res) {
 	var Parse = require('parse/node');
 	Parse.initialize("myAppId");
-	Parse.serverURL = 'http://localhost:1337/parse';
-	
-	var userRepository1 = require("./user.js");
-
-	var userRepositoryInstance = new userRepository1();
+	Parse.serverURL = parseServerLocation + parserServerPort + '/parse';
+	var userRepositoryInstance = new userRepository();
 	var output = userRepositoryInstance.addUser(Parse, res);
 });
 
