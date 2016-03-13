@@ -1,11 +1,10 @@
 var number = 2;
 var userRepository = function() {
 	var self = this;
-
 	self.addUser = function(Parse, req, res) {
-		var GameScore = Parse.Object.extend("users");
-		var gameScore = new GameScore();
-		var query = new Parse.Query(GameScore);
+		var User = Parse.Object.extend("users");
+		var userRepo = new User();
+		var query = new Parse.Query(User);
 		query.equalTo("email", req.body.email);
 		query.find({
 			success : function(results) {
@@ -14,11 +13,11 @@ var userRepository = function() {
 				if (results.length > 0) {
 					res.send("User exists");
 				} else {
-					gameScore.save(req.body, {
-						success : function(gameScore) {
+					userRepo.save(req.body, {
+						success : function(userRepo) {
 							res.send("User created");
 						},
-						error : function(gameScore, error) {
+						error : function(userRepo, error) {
 							res.send("ERROR");
 						}
 					});
@@ -28,7 +27,29 @@ var userRepository = function() {
 				console.log("Error: " + error.code + " " + error.message);
 			}
 		});
+	};
 
+	self.loginUser = function(Parse, userName, password, res) {
+		var User = Parse.Object.extend("users");
+		console.log("Logged in user: " + userName);
+		var userRepo = new User();
+		var query = new Parse.Query(User);
+		query.equalTo("email", userName);
+		query.equalTo("password", password);
+		query.find({
+			success : function(results) {
+				console.log(results.length);
+				console.log(results);
+				if (results.length > 0) {
+					var userObject = results[0];
+					res.send(userObject['id']);
+				} else
+					res.send("failed");
+			},
+			error : function(error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
 	};
 };
 

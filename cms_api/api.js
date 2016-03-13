@@ -25,6 +25,11 @@ app.get('/', function(req, res) {
 	res.send("API is running");
 });
 
+app.get('/login/:userName/:password', function(req, res, next) {
+	var userRepositoryInstance = new userRepository();
+	userRepositoryInstance.loginUser(Parse, req.params['userName'],req.params['password'], res);
+});
+
 app.param('userId', function(req, res, next, id) {
 	res.send(id);
 	next();
@@ -54,15 +59,9 @@ app.get('/test', function(req, res) {
 	var output = userRepositoryInstance.addUser(Parse, res);
 });
 
-app.param('id', function(req, res, next, id) {
-	res.send(id);
-	next();
+app.get('/param/:id/:name', function(req, res, next) {
+	res.send(req.params['name']);
 });
-
-app.get('/user/:id', function(req, res, next) {
-	next();
-});
-
 // // -------- PORT SELECTION ---------- //
 // app.use(function(req, res, next) {
 // res.header("Access-Control-Allow-Origin", "*");
