@@ -1,26 +1,34 @@
 var number = 2;
 var userRepository = function() {
 	var self = this;
-	self.addUser = function(Parse, res) {
-		var GameScore = Parse.Object.extend("GameScore");
-		var gameScore = new GameScore();
-		gameScore.set("score", 1337);
-		gameScore.set("playerName", "Sean Plott");
-		gameScore.set("cheatMode", false);
 
-		gameScore.save(null, {
-			success : function(gameScore) {
-				// Execute any logic that should take place after the object is
-				// saved.
-				res.send('New object created with objectId: ' + gameScore.id);
+	self.addUser = function(Parse, req, res) {
+		var GameScore = Parse.Object.extend("users");
+		var gameScore = new GameScore();
+		var query = new Parse.Query(GameScore);
+		query.equalTo("email", req.body.email);
+		query.find({
+			success : function(results) {
+				console.log("Successfully retrieved " + results.length
+						+ " scores.");
+				if (results.length > 0) {
+					res.send("User exists");
+				} else {
+					gameScore.save(req.body, {
+						success : function(gameScore) {
+							res.send("User created");
+						},
+						error : function(gameScore, error) {
+							res.send("ERROR");
+						}
+					});
+				}
 			},
-			error : function(gameScore, error) {
-				// Execute any logic that should take place if the save fails.
-				// error is a Parse.Error with an error code and message.
-				console.log('Failed to create new object, with error code: '
-						+ error.message);
+			error : function(error) {
+				console.log("Error: " + error.code + " " + error.message);
 			}
 		});
+
 	};
 };
 
