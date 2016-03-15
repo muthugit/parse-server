@@ -42,7 +42,7 @@ var userRepository = function() {
 				console.log(results);
 				if (results.length > 0) {
 					var userObject = results[0];
-					res.send(userObject['id']);
+					res.send(userObject);
 				} else
 					res.send("failed");
 			},
