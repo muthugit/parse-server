@@ -48,6 +48,13 @@ app.get('/login/:userName/:password', function(req, res, next) {
 			req.params['password'], res);
 });
 
+app.get('/fetch/:userApiKey', function(req, res, next) {
+	var contentRepositoryInstance = new contentRepository();
+	contentRepositoryInstance.getMultiplePost(Parse, req.params['userApiKey'],
+			req, res);
+	console.log(req.params['userApiKey']);
+});
+
 app.param('userId', function(req, res, next, id) {
 	res.send(id);
 	next();
@@ -65,8 +72,8 @@ app.post('/newUser', function(req, res) {
 	console.log(output);
 });
 
-app.post('/newUser', function(req, res) {
-	console.log(req.body.userApi);
+app.post('/newPost', function(req, res) {
+	console.log(req.body.name);
 	var contentRepositoryInstance = new contentRepository();
 	var output = contentRepositoryInstance.addPost(Parse, req, res);
 	console.log(output);
