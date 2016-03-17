@@ -19,6 +19,7 @@ app.use(bodyParser.json()); // for parsing application/json
 
 // ========= REPOSITORIES ========== //
 var userRepository = require("./user.js");
+var contentRepository = require("./content.js");
 
 // --------------- GET REQUESTS
 app.get('/', function(req, res) {
@@ -61,6 +62,13 @@ app.post('/newUser', function(req, res) {
 	console.log(req.body.name);
 	var userRepositoryInstance = new userRepository();
 	var output = userRepositoryInstance.addUser(Parse, req, res);
+	console.log(output);
+});
+
+app.post('/newUser', function(req, res) {
+	console.log(req.body.userApi);
+	var contentRepositoryInstance = new contentRepository();
+	var output = contentRepositoryInstance.addPost(Parse, req, res);
 	console.log(output);
 });
 
