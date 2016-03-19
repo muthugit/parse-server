@@ -29,6 +29,20 @@ var userRepository = function() {
 		});
 	};
 
+	self.getUserInfo = function(Parse, userApi, req, res) {
+		var User = Parse.Object.extend("users");
+		var query = new Parse.Query(User);
+		query.get(userApi, {
+			success : function(userData) {
+				console.log("------------------+ "+userData.get('email'));
+				res.send(userData);
+			},
+			error : function(object, error) {
+				res.send("API ERROR");
+			}
+		});
+	};
+
 	self.loginUser = function(Parse, userName, password, res) {
 		var User = Parse.Object.extend("users");
 		console.log("Logged in user: " + userName);

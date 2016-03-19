@@ -23,23 +23,16 @@ var contentRepository = require("./content.js");
 
 // --------------- GET REQUESTS
 app.get('/', function(req, res) {
-	var base64 = "V29ya2luZyBhdCBQYXJzZSBpcyBncmVhdCE=";
-	var file = new Parse.File("myfile.txt", {
-		base64 : base64
-	});
-	var FileDemo = Parse.Object.extend("files");
-	var fileRepo = new FileDemo();
-	fileRepo.set("file", file);
-	fileRepo.save(null, {
-		success : function(fileRepo) {
-			console.log(fileRepo.get("file"));
-		},
-		error : function(userRepo, error) {
-			res.send("ERROR");
-		}
-	});
+	/*
+	 * var base64 = "V29ya2luZyBhdCBQYXJzZSBpcyBncmVhdCE="; var file = new
+	 * Parse.File("myfile.txt", { base64 : base64 }); var FileDemo =
+	 * Parse.Object.extend("files"); var fileRepo = new FileDemo();
+	 * fileRepo.set("file", file); fileRepo.save(null, { success :
+	 * function(fileRepo) { console.log(fileRepo.get("file")); }, error :
+	 * function(userRepo, error) { res.send("ERROR"); } });
+	 */
 
-	// res.send("API is running");
+	res.send("API is running");
 });
 
 app.get('/login/:userName/:password', function(req, res, next) {
@@ -48,10 +41,30 @@ app.get('/login/:userName/:password', function(req, res, next) {
 			req.params['password'], res);
 });
 
+app.get('/getUserInfo/:userApiKey', function(req, res, next) {
+	var userRepositoryInstance = new userRepository();
+	userRepositoryInstance.getUserInfo(Parse, req.params['userApiKey'], req,
+			res);
+});
+
 app.get('/fetch/:userApiKey', function(req, res, next) {
 	var contentRepositoryInstance = new contentRepository();
 	contentRepositoryInstance.getMultiplePost(Parse, req.params['userApiKey'],
 			req, res);
+	console.log(req.params['userApiKey']);
+});
+
+app.get('/fetchUsers/:userApiKey', function(req, res, next) {
+	var contentRepositoryInstance = new contentRepository();
+	contentRepositoryInstance.getUsers(Parse, req.params['userApiKey'], req,
+			res);
+	console.log(req.params['userApiKey']);
+});
+
+app.get('/fetchContents/:userApiKey', function(req, res, next) {
+	var contentRepositoryInstance = new contentRepository();
+	contentRepositoryInstance.getContents(Parse, req.params['userApiKey'], req,
+			res);
 	console.log(req.params['userApiKey']);
 });
 
@@ -94,38 +107,6 @@ app.get('/test', function(req, res) {
 app.get('/param/:id/:name', function(req, res, next) {
 	res.send(req.params['name']);
 });
-// // -------- PORT SELECTION ---------- //
-// app.use(function(req, res, next) {
-// res.header("Access-Control-Allow-Origin", "*");
-// res.header('Access-Control-Allow-Methods', 'GET,PUT,post,POST,DELETE');
-// res.header('Access-Control-Allow-Headers',
-// 'Content-Type, Authorization, Content-Length, X-Requested-With');
-// next();
-// });
-//
-// var allowCrossDomain = function(req, res, next) {
-// res.header('Access-Control-Allow-Origin', '*');
-// res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-// res.header('Access-Control-Allow-Headers', 'Content-Type');
-//
-// next();
-// }
-//
-// app.use(allowCrossDomain);
-
-// app
-// .use(function(req, res, next) {
-// if (req.headers.origin) {
-// res.header('Access-Control-Allow-Origin', '*');
-// res.header('Access-Control-Allow-Headers',
-// 'X-Requested-With,Content-Type,Authorization');
-// res.header('Access-Control-Allow-Methods',
-// 'GET,PUT,PATCH,POST,DELETE');
-// if (req.method === 'OPTIONS')
-// return res.send(200);
-// }
-// next();
-// });
 
 app.listen(9991, function() {
 	console.log('Example app listening on port 9991!');
