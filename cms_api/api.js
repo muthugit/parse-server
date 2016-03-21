@@ -12,10 +12,23 @@ app.use(cors());
 
 // BODY PARSER
 var bodyParser = require('body-parser');
+app.use(bodyParser.json({
+	limit : '50mb',
+	extended : true
+}));
+app.use(bodyParser.urlencoded({
+	limit : '50mb',
+	extended : true
+}));
+
 app.use(bodyParser.urlencoded({
 	extended : true
 }));
-app.use(bodyParser.json()); // for parsing application/json
+// app.use(bodyParser.json()); // for parsing application/json
+
+app.use(bodyParser({
+	limit : '5mb'
+}));
 
 // ========= REPOSITORIES ========== //
 var userRepository = require("./user.js");
@@ -33,6 +46,22 @@ app.get('/', function(req, res) {
 	 */
 
 	res.send("API is running");
+});
+
+app.get('/deleteContents', function(req, res, next) {
+	var Contents = Parse.Object.extend("content");
+	var query = new Parse.Query(Contents);
+	query.notEqualTo("title", "Michael Yabuti");
+	query.destroy({
+		success : function(myObject) {
+			// The object was deleted from the Parse Cloud.
+		},
+		error : function(myObject, error) {
+			// The delete failed.
+			// error is a Parse.Error with an error code and message.
+		}
+	});
+
 });
 
 app.get('/login/:userName/:password', function(req, res, next) {
@@ -83,6 +112,29 @@ app.post('/newUser', function(req, res) {
 	var userRepositoryInstance = new userRepository();
 	var output = userRepositoryInstance.addUser(Parse, req, res);
 	console.log(output);
+});
+
+app.post('/fileUpload', function(req, res) {
+	for ( var key in req) {
+		console.log('key: ' + key + '\n' + 'value: ' + req[key]);
+	}
+	var base64 = req.body.imgText;
+	console.log("Base64: " + base64);
+	var file = new Parse.File("myfile.jpg", {
+		base64 : base64
+	});
+	var FileDemo = Parse.Object.extend("files");
+	var fileRepo = new FileDemo();
+	fileRepo.set("file", file);
+	fileRepo.save(null, {
+		success : function(fileRepo) {
+			res.send(fileRepo.get("file").url());
+		},
+		error : function(userRepo, error) {
+			res.send("ERROR" + error);
+		}
+	});
+
 });
 
 app.post('/newPost', function(req, res) {

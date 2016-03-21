@@ -32,9 +32,9 @@ var userRepository = function() {
 	self.getUserInfo = function(Parse, userApi, req, res) {
 		var User = Parse.Object.extend("users");
 		var query = new Parse.Query(User);
+		query.select('email', 'name');
 		query.get(userApi, {
 			success : function(userData) {
-				console.log("------------------+ "+userData.get('email'));
 				res.send(userData);
 			},
 			error : function(object, error) {
