@@ -8,6 +8,7 @@ var contentRepository = function() {
 			success : function(userData) {
 				var Post = Parse.Object.extend("content");
 				var postRepo = new Post();
+				postRepo.set("userItem", userData);
 				postRepo.set("status", "Pending");
 				postRepo.save(req.body, {
 					success : function(userRepo) {
@@ -64,9 +65,33 @@ var contentRepository = function() {
 		});
 	};
 
+	self.getSiteContents = function(Parse, categoryId, page, from, max,
+			authorId, req, res) {
+		console.log("Received page: " + page);
+		var Contents = Parse.Object.extend("content");
+		var query = new Parse.Query(Contents);
+		query.limit(parseInt(max));
+		if (authorId != 'all')
+			query.equalTo('userApi', authorId);
+		if (categoryId != 'any')
+			query.equalTo('categoryId', categoryId);
+		query.skip(parseInt(from) - 1);
+		query.descending("createdAt");
+		query.include('userItem');
+		query.find({
+			success : function(results) {
+				res.send(results);
+			},
+			error : function(error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+	}
+
 	self.getContents = function(Parse, userApiKey, req, res) {
 		var Contents = Parse.Object.extend("content");
-		var query = new Parse.Query(Contents).include("content.users");
+		var query = new Parse.Query(Contents);
+		query.include("users");
 		query.find({
 			success : function(results) {
 				res.send(results);

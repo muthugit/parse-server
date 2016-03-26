@@ -97,6 +97,14 @@ app.get('/fetchContents/:userApiKey', function(req, res, next) {
 	console.log(req.params['userApiKey']);
 });
 
+app.get('/getSiteContents/:categoryId/:page/:from/:max/:authorId', function(
+		req, res, next) {
+	var contentRepositoryInstance = new contentRepository();
+	contentRepositoryInstance.getSiteContents(Parse, req.params['categoryId'],
+			req.params['page'], req.params['from'], req.params['max'],
+			req.params['authorId'], req, res);
+});
+
 app.param('userId', function(req, res, next, id) {
 	res.send(id);
 	next();
