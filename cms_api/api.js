@@ -105,6 +105,13 @@ app.get('/getSiteContents/:categoryId/:page/:from/:max/:authorId', function(
 			req.params['authorId'], req, res);
 });
 
+app.get('/getSiteUsers/:categoryId/:page/:from/:max', function(req, res, next) {
+	var userRepositoryInstance = new userRepository();
+	userRepositoryInstance
+			.getSiteUsers(Parse, req.params['categoryId'], req.params['page'],
+					req.params['from'], req.params['max'], req, res);
+});
+
 app.param('userId', function(req, res, next, id) {
 	res.send(id);
 	next();

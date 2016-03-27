@@ -43,6 +43,25 @@ var userRepository = function() {
 		});
 	};
 
+	self.getSiteUsers = function(Parse, categoryId, page, from, max, req, res) {
+		console.log("Received page: " + page);
+		var Users = Parse.Object.extend("users");
+		var query = new Parse.Query(Users);
+		query.limit(parseInt(max));
+		if (categoryId != 'any')
+			query.equalTo('categoryId', categoryId);
+		query.skip(parseInt(from) - 1);
+		query.descending("createdAt");
+		query.find({
+			success : function(results) {
+				res.send(results);
+			},
+			error : function(error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+	}
+
 	self.loginUser = function(Parse, userName, password, res) {
 		var User = Parse.Object.extend("users");
 		console.log("Logged in user: " + userName);
