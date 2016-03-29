@@ -1,6 +1,13 @@
+//========= REPOSITORIES ========== //
+var userRepository = require("./user.js");
+var contentRepository = require("./content.js");
+var localConfig = require("./localConfig.js");
+
+var localConfigInstance = new localConfig();
+var parseServerLocation = localConfigInstance.getServerLocation();
+
 var express = require('express');
 var app = express();
-var parseServerLocation = "http://localhost";
 var parserServerPort = ":1337";
 var Parse = require('parse/node');
 Parse.initialize("myAppId");
@@ -29,10 +36,6 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser({
 	limit : '5mb'
 }));
-
-// ========= REPOSITORIES ========== //
-var userRepository = require("./user.js");
-var contentRepository = require("./content.js");
 
 // --------------- GET REQUESTS
 app.get('/', function(req, res) {
