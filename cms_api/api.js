@@ -39,15 +39,6 @@ app.use(bodyParser({
 
 // --------------- GET REQUESTS
 app.get('/', function(req, res) {
-	/*
-	 * var base64 = "V29ya2luZyBhdCBQYXJzZSBpcyBncmVhdCE="; var file = new
-	 * Parse.File("myfile.txt", { base64 : base64 }); var FileDemo =
-	 * Parse.Object.extend("files"); var fileRepo = new FileDemo();
-	 * fileRepo.set("file", file); fileRepo.save(null, { success :
-	 * function(fileRepo) { console.log(fileRepo.get("file")); }, error :
-	 * function(userRepo, error) { res.send("ERROR"); } });
-	 */
-
 	res.send("API is running");
 });
 
@@ -133,11 +124,10 @@ app.post('/newUser', function(req, res) {
 });
 
 app.post('/fileUpload', function(req, res) {
-	for ( var key in req) {
-		console.log('key: ' + key + '\n' + 'value: ' + req[key]);
-	}
+//	for ( var key in req) {
+//		console.log('key: ' + key + '\n' + 'value: ' + req[key]);
+//	}
 	var base64 = req.body.imgText;
-	console.log("Base64: " + base64);
 	var file = new Parse.File("myfile.jpg", {
 		base64 : base64
 	});
