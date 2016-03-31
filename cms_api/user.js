@@ -13,9 +13,25 @@ var userRepository = function() {
 				if (results.length > 0) {
 					res.send("User exists");
 				} else {
+					var password = req.body['password'];
+					delete req.body['passwordVerify'];
+					delete req.body['password'];
 					userRepo.save(req.body, {
 						success : function(userRepo) {
-							res.send("User created");
+							var user = new Parse.User();
+							user.set("username", req.body.email);
+							user.set("password", password);
+							user.set("email", req.body.email);
+							user.signUp(null, {
+								success : function(user) {
+									res.send("User created");
+									console.log("User Created");
+								},
+								error : function(user, error) {
+									res.send("ERROR");
+								}
+							});
+
 						},
 						error : function(userRepo, error) {
 							res.send("ERROR");
@@ -32,7 +48,6 @@ var userRepository = function() {
 	self.getUserInfo = function(Parse, userApi, req, res) {
 		var User = Parse.Object.extend("users");
 		var query = new Parse.Query(User);
-		query.select('email', 'name');
 		query.get(userApi, {
 			success : function(userData) {
 				res.send(userData);
@@ -63,26 +78,42 @@ var userRepository = function() {
 	}
 
 	self.loginUser = function(Parse, userName, password, res) {
-		var User = Parse.Object.extend("users");
-		console.log("Logged in user: " + userName);
-		var userRepo = new User();
-		var query = new Parse.Query(User);
-		query.equalTo("email", userName);
-		query.equalTo("password", password);
-		query.find({
-			success : function(results) {
-				console.log(results.length);
-				console.log(results);
-				if (results.length > 0) {
-					var userObject = results[0];
-					res.send(userObject);
-				} else
-					res.send("failed");
+		Parse.User.logIn(userName, password, {
+			success : function(user) {
+				console.log("UUUUUUUUU:  " + userName);
+				var UserRepo = Parse.Object.extend("users");
+				var query = new Parse.Query(UserRepo);
+				query.equalTo("email", userName);
+				query.find({
+					success : function(userData) {
+						console.log("User Found: " + userData[0]);
+						res.send(userData[0]);
+					},
+					error : function(userData, error) {
+						console.log("User logged in failed");
+						res.send("failed");
+					}
+				});
+
+				// res.send(user.id);
 			},
-			error : function(error) {
-				console.log("Error: " + error.code + " " + error.message);
+			error : function(user, error) {
+				console.log("User logged in failed");
+				res.send("failed");
 			}
 		});
+
+		/*
+		 * var User = Parse.Object.extend("users"); console.log("Logged in user: " +
+		 * userName); var userRepo = new User(); var query = new
+		 * Parse.Query(User); query.equalTo("email", userName);
+		 * query.equalTo("password", password); query.find({ success :
+		 * function(results) { console.log(results.length);
+		 * console.log(results); if (results.length > 0) { var userObject =
+		 * results[0]; res.send(userObject); } else res.send("failed"); }, error :
+		 * function(error) { console.log("Error: " + error.code + " " +
+		 * error.message); } });
+		 */
 	};
 };
 

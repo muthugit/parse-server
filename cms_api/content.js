@@ -26,6 +26,29 @@ var contentRepository = function() {
 
 	};
 
+	self.addAdminFormContent = function(Parse, req, res, repository) {
+		var User = Parse.Object.extend("users");
+		var query = new Parse.Query(User);
+		query.get(req.body.userApi, {
+			success : function(userData) {
+				var Repository = Parse.Object.extend(repository);
+				var repo = new Repository();
+				repo.save(req.body, {
+					success : function(output) {
+						res.send("Content created: id===> " + output.id);
+					},
+					error : function(userRepo, error) {
+						res.send("ERROR");
+					}
+				});
+			},
+			error : function(object, error) {
+				res.send("API ERROR");
+			}
+		});
+
+	};
+
 	self.getMultiplePost = function(Parse, userApiKey, req, res) {
 		var Posts = Parse.Object.extend("content");
 		var query = new Parse.Query(Posts);
@@ -86,12 +109,41 @@ var contentRepository = function() {
 				console.log("Error: " + error.code + " " + error.message);
 			}
 		});
-	}
+	};
+
+	self.getGenericContents = function(Parse, repository, req, res) {
+		var Contents = Parse.Object.extend(repository);
+		var query = new Parse.Query(Contents);
+		query.find({
+			success : function(results) {
+				res.send(results);
+			},
+			error : function(error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+	};
+
+	self.getSingleContent = function(Parse, postId, req, res) {
+		
+		console.log(postId);
+		
+		var Contents = Parse.Object.extend("content");
+		var query = new Parse.Query(Contents);
+		query.get(postId, {
+			success : function(results) {
+				res.send(results);
+			},
+			error : function(error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+	};
 
 	self.getContents = function(Parse, userApiKey, req, res) {
 		var Contents = Parse.Object.extend("content");
 		var query = new Parse.Query(Contents);
-		query.include("users");
+		query.include("userItem");
 		query.find({
 			success : function(results) {
 				res.send(results);

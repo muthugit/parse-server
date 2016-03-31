@@ -48,11 +48,8 @@ app.get('/deleteContents', function(req, res, next) {
 	query.notEqualTo("title", "Michael Yabuti");
 	query.destroy({
 		success : function(myObject) {
-			// The object was deleted from the Parse Cloud.
 		},
 		error : function(myObject, error) {
-			// The delete failed.
-			// error is a Parse.Error with an error code and message.
 		}
 	});
 
@@ -91,6 +88,19 @@ app.get('/fetchContents/:userApiKey', function(req, res, next) {
 	console.log(req.params['userApiKey']);
 });
 
+app.get('/fetchSingleContent/:contentId', function(req, res, next) {
+	var contentRepositoryInstance = new contentRepository();
+	contentRepositoryInstance.getSingleContent(Parse, req.params['contentId'], req,
+			res);
+	console.log(req.params['contentId']);
+});
+
+app.get('/getGenericContents/:repository', function(req, res, next) {
+	var contentRepositoryInstance = new contentRepository();
+	contentRepositoryInstance.getGenericContents(Parse,
+			req.params['repository'], req, res);
+});
+
 app.get('/getSiteContents/:categoryId/:page/:from/:max/:authorId', function(
 		req, res, next) {
 	var contentRepositoryInstance = new contentRepository();
@@ -124,9 +134,6 @@ app.post('/newUser', function(req, res) {
 });
 
 app.post('/fileUpload', function(req, res) {
-//	for ( var key in req) {
-//		console.log('key: ' + key + '\n' + 'value: ' + req[key]);
-//	}
 	var base64 = req.body.imgText;
 	var file = new Parse.File("myfile.jpg", {
 		base64 : base64
@@ -146,7 +153,6 @@ app.post('/fileUpload', function(req, res) {
 });
 
 app.post('/newPost', function(req, res) {
-	console.log(req.body.name);
 	var contentRepositoryInstance = new contentRepository();
 	var output = contentRepositoryInstance.addPost(Parse, req, res);
 	console.log(output);
@@ -154,6 +160,14 @@ app.post('/newPost', function(req, res) {
 
 app.get('/signUp', function(req, res) {
 	res.send("FFFFFF");
+});
+
+app.post('/newAdminGenericContent', function(req, res) {
+	var contentRepositoryInstance = new contentRepository();
+	var repository = req.body.repository;
+	var output = contentRepositoryInstance.addAdminFormContent(Parse, req, res,
+			repository);
+	console.log(output);
 });
 
 // ------ SAMPLE CODES ------------ //
