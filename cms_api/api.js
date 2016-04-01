@@ -90,8 +90,8 @@ app.get('/fetchContents/:userApiKey', function(req, res, next) {
 
 app.get('/fetchSingleContent/:contentId', function(req, res, next) {
 	var contentRepositoryInstance = new contentRepository();
-	contentRepositoryInstance.getSingleContent(Parse, req.params['contentId'], req,
-			res);
+	contentRepositoryInstance.getSingleContent(Parse, req.params['contentId'],
+			req, res);
 	console.log(req.params['contentId']);
 });
 
@@ -114,6 +114,13 @@ app.get('/getSiteUsers/:categoryId/:page/:from/:max', function(req, res, next) {
 	userRepositoryInstance
 			.getSiteUsers(Parse, req.params['categoryId'], req.params['page'],
 					req.params['from'], req.params['max'], req, res);
+});
+
+app.get('/approveContent/:userApiKey/:contentId/:toStatus', function(req, res,
+		next) {
+	var contentRepositoryInstance = new contentRepository();
+	contentRepositoryInstance.approveContent(Parse, req.params['userApiKey'],
+			req.params['contentId'], req.params['toStatus'], req, res);
 });
 
 app.param('userId', function(req, res, next, id) {

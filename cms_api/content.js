@@ -98,6 +98,7 @@ var contentRepository = function() {
 			query.equalTo('userApi', authorId);
 		if (categoryId != 'any')
 			query.equalTo('categoryId', categoryId);
+		query.equalTo('status','Approved');
 		query.skip(parseInt(from) - 1);
 		query.descending("createdAt");
 		query.include('userItem');
@@ -125,9 +126,9 @@ var contentRepository = function() {
 	};
 
 	self.getSingleContent = function(Parse, postId, req, res) {
-		
+
 		console.log(postId);
-		
+
 		var Contents = Parse.Object.extend("content");
 		var query = new Parse.Query(Contents);
 		query.get(postId, {
@@ -136,6 +137,23 @@ var contentRepository = function() {
 			},
 			error : function(error) {
 				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+	};
+
+	self.approveContent = function(Parse, userApiKey, contentId, toStatus, req,
+			res) {
+		console.log("User API: " + userApiKey);
+		var GameScore = Parse.Object.extend("content");
+		var query = new Parse.Query(GameScore);
+		query.get(contentId, {
+			success : function(gameScore) {
+				gameScore.set("status", toStatus);
+				gameScore.save();
+				res.send(toStatus);
+			},
+			error : function(object, error) {
+				res.send("ERROR");
 			}
 		});
 	};
