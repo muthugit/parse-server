@@ -131,6 +131,7 @@ var contentRepository = function() {
 
 		var Contents = Parse.Object.extend("content");
 		var query = new Parse.Query(Contents);
+		query.include("userItem");
 		query.get(postId, {
 			success : function(results) {
 				res.send(results);
