@@ -2,20 +2,27 @@ var number = 2;
 var contentRepository = function() {
 	var self = this;
 	self.addPost = function(Parse, req, res) {
+		var cr = new contentRepository();
 		var User = Parse.Object.extend("users");
 		var query = new Parse.Query(User);
 		query.get(req.body.userApi, {
 			success : function(userData) {
+
 				var Post = Parse.Object.extend("content");
 				var postRepo = new Post();
+
 				postRepo.set("userItem", userData);
 				postRepo.set("status", "Pending");
-				postRepo.save(req.body, {
-					success : function(userRepo) {
-						res.send("Post created: id===> " + userRepo.id);
+
+				var User = Parse.Object.extend("category");
+				var query = new Parse.Query(User);
+				query.get(req.body.categoryItem, {
+					success : function(categoryData) {
+						postRepo.set("categoryItemData", categoryData);
+						cr.saveItem(postRepo, req, res);
 					},
-					error : function(userRepo, error) {
-						res.send("ERROR");
+					error : function(categoryData, error) {
+						cr.saveItem(postRepo, req, res);
 					}
 				});
 			},
@@ -24,6 +31,18 @@ var contentRepository = function() {
 			}
 		});
 
+	};
+
+	self.saveItem = function(postRepo, req, res) {
+		postRepo.save(req.body, {
+			success : function(userRepo) {
+				res.send("Post created: id===> " + userRepo.id);
+			},
+			error : function(userRepo, error) {
+				console.log("Error==> " + error);
+				res.send("ERROR");
+			}
+		});
 	};
 
 	self.addAdminFormContent = function(Parse, req, res, repository) {
@@ -98,10 +117,11 @@ var contentRepository = function() {
 			query.equalTo('userApi', authorId);
 		if (categoryId != 'any')
 			query.equalTo('categoryId', categoryId);
-		query.equalTo('status','Approved');
+		query.equalTo('status', 'Approved');
 		query.skip(parseInt(from) - 1);
 		query.descending("createdAt");
 		query.include('userItem');
+		query.include('categoryItemData');
 		query.find({
 			success : function(results) {
 				res.send(results);
@@ -132,6 +152,7 @@ var contentRepository = function() {
 		var Contents = Parse.Object.extend("content");
 		var query = new Parse.Query(Contents);
 		query.include("userItem");
+		query.include("categoryItemData");
 		query.get(postId, {
 			success : function(results) {
 				res.send(results);
