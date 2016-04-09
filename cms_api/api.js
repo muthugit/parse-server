@@ -45,7 +45,7 @@ app.get('/', function(req, res) {
 	res.send("API is running");
 });
 
-app.get('/testEmail:from/:to/:subject', function(req, res) {
+app.get('/testEmail/:from/:to/:subject', function(req, res) {
 	var from = req.params['from'];
 	var to = req.params['to'];
 	var subject = req.params['subject'];
