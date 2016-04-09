@@ -45,17 +45,19 @@ app.get('/', function(req, res) {
 	res.send("API is running");
 });
 
-app.get('/testEmail',
-		function(req, res) {
-			var substitutions = {
-				"-name-" : [ "New Muthu Pandian 123" ],
-				"-password-" : [ 'This is pwd' ]
-			};
-			var emailRepositoryInstance = new emailRepository();
-			emailRepositoryInstance.sendMail(req, res, signUpTemplateId,
-					substitutions);
-			console.log(signUpTemplateId);
-		});
+app.get('/testEmail:from/:to/:subject', function(req, res) {
+	var from = req.params['from'];
+	var to = req.params['to'];
+	var subject = req.params['subject'];
+	var substitutions = {
+		"-name-" : [ "New Muthu Pandian 123" ],
+		"-password-" : [ 'This is pwd' ]
+	};
+	var emailRepositoryInstance = new emailRepository();
+	emailRepositoryInstance.sendMail(req, res, from, to, subject, body,
+			signUpTemplateId, substitutions);
+	console.log(signUpTemplateId);
+});
 
 app.get('/deleteContents', function(req, res, next) {
 	var Contents = Parse.Object.extend("content");
