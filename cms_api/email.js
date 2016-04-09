@@ -18,7 +18,7 @@ var emailRepository = function() {
 		});
 		email.setSubstitutions(substitutions);
 		sendgrid.send(email);
-		console.log("Finished");
+		res.send("Email Sent");
 	};
 
 };
