@@ -19,7 +19,7 @@ var emailRepository = function() {
 		});
 		email.setSubstitutions(substitutions);
 		sendgrid.send(email);
-		res.send("Email Sent");
+		console.log("Email Sent");
 	};
 
 };

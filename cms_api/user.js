@@ -1,4 +1,7 @@
 var number = 2;
+var signUpTemplateId = "a4fe974f-6240-4af8-b629-3a1e1a037076";
+var emailRepository = require("./email.js");
+
 var userRepository = function() {
 	var self = this;
 	self.addUser = function(Parse, req, res) {
@@ -13,19 +16,34 @@ var userRepository = function() {
 				if (results.length > 0) {
 					res.send("User exists");
 				} else {
-					var password = req.body['password'];
 					delete req.body['passwordVerify'];
 					delete req.body['password'];
 					userRepo.save(req.body, {
 						success : function(userRepo) {
+							var password=userRepo.id;
 							var user = new Parse.User();
 							user.set("username", req.body.email);
 							user.set("password", password);
 							user.set("email", req.body.email);
 							user.signUp(null, {
 								success : function(user) {
-									res.send("User created");
+									
 									console.log("User Created");
+									var from = "no-reply@padaippaligalulagam.com";
+									var to = req.body.email;
+									var subject ="Registration Successful";
+									var body = " - ";
+									var substitutions = {
+										"-name-" : [req.body.email ],
+										"-password-" : [ password ]
+									};
+									var emailRepositoryInstance = new emailRepository();
+									emailRepositoryInstance.sendMail(req, res, from, to, subject, body,
+											signUpTemplateId, substitutions);
+									console.log(signUpTemplateId);
+									
+									res.send("User created");
+									console.log("Email sent");
 								},
 								error : function(user, error) {
 									res.send("ERROR");

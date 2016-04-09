@@ -49,7 +49,7 @@ app.get('/testEmail/:from/:to/:subject', function(req, res) {
 	var from = req.params['from'];
 	var to = req.params['to'];
 	var subject = req.params['subject'];
-	var body=" - ";
+	var body = " - ";
 	var substitutions = {
 		"-name-" : [ "New Muthu Pandian 123" ],
 		"-password-" : [ 'This is pwd' ]
