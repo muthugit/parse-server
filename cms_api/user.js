@@ -16,34 +16,18 @@ var userRepository = function() {
 				if (results.length > 0) {
 					res.send("User exists");
 				} else {
-					delete req.body['passwordVerify'];
-					delete req.body['password'];
 					userRepo.save(req.body, {
 						success : function(userRepo) {
-							var password=userRepo.id;
+							var password = userRepo.id;
 							var user = new Parse.User();
 							user.set("username", req.body.email);
 							user.set("password", password);
 							user.set("email", req.body.email);
 							user.signUp(null, {
 								success : function(user) {
-									
-									console.log("User Created");
-									var from = "no-reply@padaippaligalulagam.com";
-									var to = req.body.email;
-									var subject ="Registration Successful";
-									var body = " - ";
-									var substitutions = {
-										"-name-" : [req.body.email ],
-										"-password-" : [ password ]
-									};
-									var emailRepositoryInstance = new emailRepository();
-									emailRepositoryInstance.sendMail(req, res, from, to, subject, body,
-											signUpTemplateId, substitutions);
-									console.log(signUpTemplateId);
-									
+									self.newUserEmailNotification(req, res,
+											password);
 									res.send("User created");
-									console.log("Email sent");
 								},
 								error : function(user, error) {
 									res.send("ERROR");
@@ -61,6 +45,23 @@ var userRepository = function() {
 				console.log("Error: " + error.code + " " + error.message);
 			}
 		});
+	};
+
+	self.newUserEmailNotification = function(req, res, password) {
+		var from = "no-reply@padaippaligalulagam.com";
+		var to = req.body.email;
+		var subject = "Registration Successful";
+		var body = " - ";
+		var substitutions = {
+			"-name-" : [ req.body.email ],
+			"-password-" : [ password ]
+		};
+		var emailRepositoryInstance = new emailRepository();
+		emailRepositoryInstance.sendMail(req, res, from, to, subject, body,
+				signUpTemplateId, substitutions);
+		console.log(signUpTemplateId);
+
+		console.log("Email sent");
 	};
 
 	self.getUserInfo = function(Parse, userApi, req, res) {
