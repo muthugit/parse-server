@@ -107,6 +107,24 @@ var contentRepository = function() {
 		});
 	};
 
+	self.getCategoryContents = function(Parse, categoryId, req, res) {
+		var Contents = Parse.Object.extend("content");
+		var query = new Parse.Query(Contents);
+		if (categoryId != 'any')
+			query.equalTo('categoryId', categoryId);
+		query.descending("createdAt");
+		query.include('userItem');
+		query.include('categoryItemData');
+		query.find({
+			success : function(results) {
+				res.send(results);
+			},
+			error : function(error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+	};
+
 	self.getSiteContents = function(Parse, categoryId, page, from, max,
 			authorId, req, res) {
 		console.log("Received page: " + page);

@@ -1,6 +1,7 @@
 //========= REPOSITORIES ========== //
 var userRepository = require("./user.js");
 var contentRepository = require("./content.js");
+var emailRepository = require("./email.js");
 var localConfig = require("./localConfig.js");
 
 var localConfigInstance = new localConfig();
@@ -12,6 +13,8 @@ var parserServerPort = ":1337";
 var Parse = require('parse/node');
 Parse.initialize("myAppId");
 Parse.serverURL = parseServerLocation + parserServerPort + '/parse';
+
+var signUpTemplateId = "a4fe974f-6240-4af8-b629-3a1e1a037076";
 
 // USING CORS -- NEED TO INSTALL
 var cors = require('cors');
@@ -41,6 +44,18 @@ app.use(bodyParser({
 app.get('/', function(req, res) {
 	res.send("API is running");
 });
+
+app.get('/testEmail',
+		function(req, res) {
+			var substitutions = {
+				"-name-" : [ "New Muthu Pandian 123" ],
+				"-password-" : [ 'This is pwd' ]
+			};
+			var emailRepositoryInstance = new emailRepository();
+			emailRepositoryInstance.sendMail(req, res, signUpTemplateId,
+					substitutions);
+			console.log(signUpTemplateId);
+		});
 
 app.get('/deleteContents', function(req, res, next) {
 	var Contents = Parse.Object.extend("content");
@@ -109,13 +124,18 @@ app.get('/getSiteContents/:categoryId/:page/:from/:max/:authorId', function(
 			req.params['authorId'], req, res);
 });
 
+app.get('/getCategoryContents/:categoryId', function(req, res, next) {
+	var contentRepositoryInstance = new contentRepository();
+	contentRepositoryInstance.getCategoryContents(Parse,
+			req.params['categoryId'], req, res);
+});
+
 app.get('/getSiteUsers/:categoryId/:page/:from/:max', function(req, res, next) {
 	var userRepositoryInstance = new userRepository();
 	userRepositoryInstance
 			.getSiteUsers(Parse, req.params['categoryId'], req.params['page'],
 					req.params['from'], req.params['max'], req, res);
 });
-
 
 app.get('/approveContent/:userApiKey/:contentId/:toStatus', function(req, res,
 		next) {
