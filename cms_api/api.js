@@ -113,6 +113,13 @@ app.get('/fetchSingleContent/:contentId', function(req, res, next) {
 	console.log(req.params['contentId']);
 });
 
+app.get('/fetchContentList/:categoryId', function(req, res, next) {
+	var contentRepositoryInstance = new contentRepository();
+	contentRepositoryInstance.getContentList(Parse, req.params['categoryId'],
+			req, res);
+	console.log(req.params['categoryId']);
+});
+
 app.get('/getGenericContents/:repository', function(req, res, next) {
 	var contentRepositoryInstance = new contentRepository();
 	contentRepositoryInstance.getGenericContents(Parse,

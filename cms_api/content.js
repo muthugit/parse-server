@@ -134,7 +134,7 @@ var contentRepository = function() {
 		if (authorId != 'all')
 			query.equalTo('userApi', authorId);
 		if (categoryId != 'any')
-			query.equalTo('categoryId', categoryId);
+			query.equalTo('categoryItem', categoryId);
 		query.equalTo('status', 'Approved');
 		query.skip(parseInt(from) - 1);
 		query.descending("createdAt");
@@ -164,14 +164,27 @@ var contentRepository = function() {
 	};
 
 	self.getSingleContent = function(Parse, postId, req, res) {
-
-		console.log(postId);
-
 		var Contents = Parse.Object.extend("content");
 		var query = new Parse.Query(Contents);
 		query.include("userItem");
 		query.include("categoryItemData");
 		query.get(postId, {
+			success : function(results) {
+				res.send(results);
+			},
+			error : function(error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+	};
+
+	self.getContentList = function(Parse, categoryId, req, res) {
+		var Contents = Parse.Object.extend("content");
+		var query = new Parse.Query(Contents);
+		query.equalTo('categoryItem', categoryId);
+		query.include("userItem");
+		query.include("categoryItemData");
+		query.find({
 			success : function(results) {
 				res.send(results);
 			},
