@@ -184,6 +184,7 @@ var contentRepository = function() {
 		query.equalTo('categoryItem', categoryId);
 		query.include("userItem");
 		query.include("categoryItemData");
+		query.descending("createdAt");
 		query.find({
 			success : function(results) {
 				res.send(results);
@@ -215,6 +216,7 @@ var contentRepository = function() {
 		var Contents = Parse.Object.extend("content");
 		var query = new Parse.Query(Contents);
 		query.include("userItem");
+		query.descending("createdAt");
 		query.find({
 			success : function(results) {
 				res.send(results);
