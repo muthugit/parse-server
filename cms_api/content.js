@@ -163,6 +163,20 @@ var contentRepository = function() {
 		});
 	};
 
+	self.getGenericContentsById = function(Parse, repository, objectId, req,
+			res) {
+		var Contents = Parse.Object.extend(repository);
+		var query = new Parse.Query(Contents);
+		query.get(objectId, {
+			success : function(results) {
+				res.send(results);
+			},
+			error : function(error) {
+				console.log("Error: " + error);
+			}
+		});
+	};
+
 	self.getSingleContent = function(Parse, postId, req, res) {
 		var Contents = Parse.Object.extend("content");
 		var query = new Parse.Query(Contents);
@@ -223,6 +237,22 @@ var contentRepository = function() {
 			},
 			error : function(error) {
 				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+	};
+
+	self.updateItem = function(Parse, repository, req, res) {
+		var Item = Parse.Object.extend(repository);
+		var itemRepo = new Item();
+		itemRepo.id = req.body['objectId'];
+		itemRepo.save(req.body, {
+			success : function(itemResponse) {
+				console.log("Updated==============");
+				res.send(itemResponse);
+			},
+			error : function(itemResponse, error) {
+				console.log("Error==> " + error);
+				res.send("ERROR");
 			}
 		});
 	};

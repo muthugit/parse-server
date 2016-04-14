@@ -126,6 +126,13 @@ app.get('/getGenericContents/:repository', function(req, res, next) {
 			req.params['repository'], req, res);
 });
 
+app.get('/getGenericContentsById/:repository/:objectId', function(req, res,
+		next) {
+	var contentRepositoryInstance = new contentRepository();
+	contentRepositoryInstance.getGenericContentsById(Parse,
+			req.params['repository'], req.params['objectId'], req, res);
+});
+
 app.get('/getSiteContents/:categoryId/:page/:from/:max/:authorId', function(
 		req, res, next) {
 	var contentRepositoryInstance = new contentRepository();
@@ -171,8 +178,17 @@ app.post('/newUser', function(req, res) {
 	console.log(output);
 });
 
+app.post('/updateItem/:repository', function(req, res) {
+	console.log("Profle pic: " + req.body.profilePic);
+	var contentRepositoryInstance = new contentRepository();
+	var output = contentRepositoryInstance.updateItem(Parse,
+			req.params['repository'], req, res);
+	console.log(output);
+});
+
 app.post('/fileUpload', function(req, res) {
 	var base64 = req.body.imgText;
+	console.log("Base64 =========> " + base64);
 	var file = new Parse.File("myfile.jpg", {
 		base64 : base64
 	});
