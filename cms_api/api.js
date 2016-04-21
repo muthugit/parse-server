@@ -136,9 +136,17 @@ app.get('/getGenericContentsById/:repository/:objectId', function(req, res,
 app.get('/getSiteContents/:categoryId/:page/:from/:max/:authorId', function(
 		req, res, next) {
 	var contentRepositoryInstance = new contentRepository();
-	contentRepositoryInstance.getSiteContents(Parse, req.params['categoryId'],
+	contentRepositoryInstance.getContentsInfo(Parse, req.params['categoryId'],
 			req.params['page'], req.params['from'], req.params['max'],
-			req.params['authorId'], req, res);
+			req.params['authorId'], true, req, res);
+});
+
+app.get('/getMyContents/:categoryId/:page/:from/:max/:authorId', function(
+		req, res, next) {
+	var contentRepositoryInstance = new contentRepository();
+	contentRepositoryInstance.getContentsInfo(Parse, req.params['categoryId'],
+			req.params['page'], req.params['from'], req.params['max'],
+			req.params['authorId'], false, req, res);
 });
 
 app.get('/getCategoryContents/:categoryId', function(req, res, next) {
