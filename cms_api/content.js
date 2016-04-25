@@ -137,10 +137,9 @@ var contentRepository = function() {
 			query.equalTo('categoryItem', categoryId);
 		if (showOnlyApproved == true)
 			query.equalTo('status', 'Approved');
-		console.log("Feature image required: "+isFeatureImageRequired);
-		if (isFeatureImageRequired == "true"){
+		if (isFeatureImageRequired == "true") {
+			console.log("Feature image required: " + isFeatureImageRequired);
 			query.notEqualTo('featureImageURL', "");
-			query.notEqualTo('featureImageURL', null);
 		}
 		query.skip(parseInt(from) - 1);
 		query.descending("createdAt");
