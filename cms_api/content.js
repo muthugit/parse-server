@@ -138,7 +138,7 @@ var contentRepository = function() {
 		if (showOnlyApproved == true)
 			query.equalTo('status', 'Approved');
 		if (isFeatureImageRequired == true)
-			query.notEqualTo('featureImageUrl', null)
+			query.notEqualTo('featureImageURL', null);
 		query.skip(parseInt(from) - 1);
 		query.descending("createdAt");
 		query.include('userItem');
