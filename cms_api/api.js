@@ -12,7 +12,7 @@ var app = express();
 var parserServerPort = ":1337";
 var Parse = require('parse/node');
 Parse.initialize("myAppId");
-Parse.serverURL = parseServerLocation + parserServerPort + '/parse';
+Parse.serverURL = parseServerLocation + '/parse';
 
 var signUpTemplateId = "a4fe974f-6240-4af8-b629-3a1e1a037076";
 
@@ -79,6 +79,11 @@ app.get('/login/:userName/:password', function(req, res, next) {
 			req.params['password'], res);
 });
 
+app.get('/resetPassword/:userName', function(req, res, next) {
+	var userRepositoryInstance = new userRepository();
+	userRepositoryInstance.resetPassword(Parse, req.params['userName'], res);
+});
+
 app.get('/getUserInfo/:userApiKey', function(req, res, next) {
 	var userRepositoryInstance = new userRepository();
 	userRepositoryInstance.getUserInfo(Parse, req.params['userApiKey'], req,
@@ -133,16 +138,20 @@ app.get('/getGenericContentsById/:repository/:objectId', function(req, res,
 			req.params['repository'], req.params['objectId'], req, res);
 });
 
-app.get('/getSiteContents/:categoryId/:page/:from/:max/:authorId', function(
-		req, res, next) {
-	var contentRepositoryInstance = new contentRepository();
-	contentRepositoryInstance.getContentsInfo(Parse, req.params['categoryId'],
-			req.params['page'], req.params['from'], req.params['max'],
-			req.params['authorId'], true, req, res);
-});
+app
+		.get(
+				'/getSiteContents/:categoryId/:page/:from/:max/:authorId/:featureImageRequired',
+				function(req, res, next) {
+					var contentRepositoryInstance = new contentRepository();
+					contentRepositoryInstance.getContentsInfo(Parse,
+							req.params['categoryId'], req.params['page'],
+							req.params['from'], req.params['max'],
+							req.params['authorId'], true,
+							req.params['featureImageRequired'], req, res);
+				});
 
-app.get('/getMyContents/:categoryId/:page/:from/:max/:authorId', function(
-		req, res, next) {
+app.get('/getMyContents/:categoryId/:page/:from/:max/:authorId', function(req,
+		res, next) {
 	var contentRepositoryInstance = new contentRepository();
 	contentRepositoryInstance.getContentsInfo(Parse, req.params['categoryId'],
 			req.params['page'], req.params['from'], req.params['max'],
@@ -180,7 +189,6 @@ app.get('/userExist/:userId', function(req, res, next) {
 
 // --------------- POST REQUESTS
 app.post('/newUser', function(req, res) {
-	console.log(req.body.name);
 	var userRepositoryInstance = new userRepository();
 	var output = userRepositoryInstance.addUser(Parse, req, res);
 	console.log(output);
@@ -235,7 +243,7 @@ app.post('/newAdminGenericContent', function(req, res) {
 // ------ SAMPLE CODES ------------ //
 
 app.get('/test', function(req, res) {
-	Parse.serverURL = parseServerLocation + parserServerPort + '/parse';
+	Parse.serverURL = parseServerLocation + '/parse';
 	var userRepositoryInstance = new userRepository();
 	var output = userRepositoryInstance.addUser(Parse, res);
 });

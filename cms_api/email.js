@@ -1,7 +1,7 @@
 var emailRepository = function() {
 	var sendGridAPI = "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";
 	var self = this;
-	self.sendMail = function(req, res, from, to, subject, body, templateId,
+	self.sendMail = function(from, to, subject, body, templateId,
 			substitutions) {
 		var sendgrid = require("sendgrid")(sendGridAPI);
 		var email = new sendgrid.Email();

@@ -1,5 +1,6 @@
 var number = 2;
 var signUpTemplateId = "a4fe974f-6240-4af8-b629-3a1e1a037076";
+var resetPasswordTemplateId = "";
 var emailRepository = require("./email.js");
 
 var userRepository = function() {
@@ -57,10 +58,27 @@ var userRepository = function() {
 			"-password-" : [ password ]
 		};
 		var emailRepositoryInstance = new emailRepository();
-		emailRepositoryInstance.sendMail(req, res, from, to, subject, body,
+		emailRepositoryInstance.sendMail(from, to, subject, body,
 				signUpTemplateId, substitutions);
 		console.log(signUpTemplateId);
 
+		console.log("Email sent");
+	};
+
+	self.resetPasswordNotification = function(email, resetPasswordUrl) {
+		console.log("Email is: " + email);
+		resetPasswordUrl = "Reset here: " + resetPasswordUrl;
+		var from = "no-reply@padaippaligalulagam.com";
+		var to = email;
+		var subject = "Reset Password";
+		var body = " - ";
+		var substitutions = {
+			"-name-" : [ email ],
+			"-password-" : [ resetPasswordUrl ]
+		};
+		var emailRepositoryInstance = new emailRepository();
+		emailRepositoryInstance.sendMail(from, to, subject, body,
+				signUpTemplateId, substitutions);
 		console.log("Email sent");
 	};
 
@@ -99,7 +117,6 @@ var userRepository = function() {
 	self.loginUser = function(Parse, userName, password, res) {
 		Parse.User.logIn(userName, password, {
 			success : function(user) {
-				console.log("UUUUUUUUU:  " + userName);
 				var UserRepo = Parse.Object.extend("users");
 				var query = new Parse.Query(UserRepo);
 				query.equalTo("email", userName);
@@ -121,18 +138,28 @@ var userRepository = function() {
 				res.send("failed");
 			}
 		});
+	};
 
-		/*
-		 * var User = Parse.Object.extend("users"); console.log("Logged in user: " +
-		 * userName); var userRepo = new User(); var query = new
-		 * Parse.Query(User); query.equalTo("email", userName);
-		 * query.equalTo("password", password); query.find({ success :
-		 * function(results) { console.log(results.length);
-		 * console.log(results); if (results.length > 0) { var userObject =
-		 * results[0]; res.send(userObject); } else res.send("failed"); }, error :
-		 * function(error) { console.log("Error: " + error.code + " " +
-		 * error.message); } });
-		 */
+	self.resetPassword = function(Parse, userName, res) {
+		console.log("Started reset");
+		var query = new Parse.Query(Parse.User);
+		query.equalTo("email", userName); // find all the women
+		query
+				.find({
+					success : function(result) {
+						if (result.length > 0) {
+							var object = result[0];
+							resetPasswordUrl = "http://padaippaligalulagam.com/my/#!/resetPwd/"
+									+ object.id;
+							console.log("Reset pwd: " + resetPasswordUrl
+									+ " == " + object.id);
+							self.resetPasswordNotification(userName,
+									resetPasswordUrl);
+							res.send("100");
+						} else
+							res.send("404");
+					}
+				});
 	};
 };
 

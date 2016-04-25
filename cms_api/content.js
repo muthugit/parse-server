@@ -125,8 +125,8 @@ var contentRepository = function() {
 		});
 	};
 
-	self.getContentsInfo = function(Parse, categoryId, page, from, max, authorId,
-			showOnlyApproved, req, res) {
+	self.getContentsInfo = function(Parse, categoryId, page, from, max,
+			authorId, showOnlyApproved, isFeatureImageRequired, req, res) {
 		console.log("Received page: " + page);
 		var Contents = Parse.Object.extend("content");
 		var query = new Parse.Query(Contents);
@@ -137,6 +137,8 @@ var contentRepository = function() {
 			query.equalTo('categoryItem', categoryId);
 		if (showOnlyApproved == true)
 			query.equalTo('status', 'Approved');
+		if (isFeatureImageRequired == true)
+			query.notEqualTo('featureImageUrl', null)
 		query.skip(parseInt(from) - 1);
 		query.descending("createdAt");
 		query.include('userItem');
