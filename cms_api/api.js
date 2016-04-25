@@ -155,7 +155,7 @@ app.get('/getMyContents/:categoryId/:page/:from/:max/:authorId', function(req,
 	var contentRepositoryInstance = new contentRepository();
 	contentRepositoryInstance.getContentsInfo(Parse, req.params['categoryId'],
 			req.params['page'], req.params['from'], req.params['max'],
-			req.params['authorId'], false, req, res);
+			req.params['authorId'], false, false, req, res);
 });
 
 app.get('/getCategoryContents/:categoryId', function(req, res, next) {

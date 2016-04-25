@@ -138,7 +138,6 @@ var contentRepository = function() {
 		if (showOnlyApproved == true)
 			query.equalTo('status', 'Approved');
 		if (isFeatureImageRequired == "true") {
-			console.log("Feature image required: " + isFeatureImageRequired);
 			query.notEqualTo('featureImageURL', "");
 		}
 		query.skip(parseInt(from) - 1);
