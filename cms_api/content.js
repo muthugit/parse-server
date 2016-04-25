@@ -137,6 +137,7 @@ var contentRepository = function() {
 			query.equalTo('categoryItem', categoryId);
 		if (showOnlyApproved == true)
 			query.equalTo('status', 'Approved');
+		console.log("Feature image required: "+isFeatureImageRequired);
 		if (isFeatureImageRequired == "true"){
 			query.notEqualTo('featureImageURL', "");
 			query.notEqualTo('featureImageURL', null);
