@@ -237,6 +237,7 @@ var contentRepository = function() {
 		query.descending("createdAt");
 		query.find({
 			success : function(results) {
+				console.log("Success");
 				res.send(results);
 			},
 			error : function(error) {

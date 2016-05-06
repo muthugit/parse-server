@@ -2,6 +2,11 @@ var number = 2;
 var signUpTemplateId = "a4fe974f-6240-4af8-b629-3a1e1a037076";
 var resetPasswordTemplateId = "";
 var emailRepository = require("./email.js");
+var localConfig = require("./localConfig.js");
+var localConfigInstance = new localConfig();
+
+var resetPasswordUrlPrefix = localConfigInstance.getResetPasswordUrlPrefix();
+var adminUrl = localConfigInstance.getAdminUrl();
 
 var userRepository = function() {
 	var self = this;
@@ -26,8 +31,13 @@ var userRepository = function() {
 							user.set("email", req.body.email);
 							user.signUp(null, {
 								success : function(user) {
-									self.newUserEmailNotification(req, res,
-											password);
+									// self.newUserEmailNotification(req, res,
+									// password);
+									resetPasswordUrl = resetPasswordUrlPrefix
+											+ user.id;
+									self.resetPasswordNotification(req.body.email,
+											resetPasswordUrl,
+											"Its time to set the password");
 									res.send("User created");
 								},
 								error : function(user, error) {
@@ -65,12 +75,11 @@ var userRepository = function() {
 		console.log("Email sent");
 	};
 
-	self.resetPasswordNotification = function(email, resetPasswordUrl) {
+	self.resetPasswordNotification = function(email, resetPasswordUrl, subject) {
 		console.log("Email is: " + email);
 		resetPasswordUrl = "Reset here: " + resetPasswordUrl;
 		var from = "no-reply@padaippaligalulagam.com";
 		var to = email;
-		var subject = "Reset Password";
 		var body = " - ";
 		var substitutions = {
 			"-name-" : [ email ],
@@ -144,22 +153,41 @@ var userRepository = function() {
 		console.log("Started reset");
 		var query = new Parse.Query(Parse.User);
 		query.equalTo("email", userName); // find all the women
-		query
-				.find({
-					success : function(result) {
-						if (result.length > 0) {
-							var object = result[0];
-							resetPasswordUrl = "http://padaippaligalulagam.com/my/#!/resetPwd/"
-									+ object.id;
-							console.log("Reset pwd: " + resetPasswordUrl
-									+ " == " + object.id);
-							self.resetPasswordNotification(userName,
-									resetPasswordUrl);
-							res.send("100");
-						} else
-							res.send("404");
-					}
-				});
+		query.find({
+			success : function(result) {
+				if (result.length > 0) {
+					var object = result[0];
+					resetPasswordUrl = resetPasswordUrlPrefix + object.id;
+					console.log("Reset pwd: " + resetPasswordUrl + " == "
+							+ object.id);
+					self.resetPasswordNotification(userName, resetPasswordUrl,
+							"Reset your password");
+					res.send("100");
+				} else
+					res.send("404");
+			}
+		});
+	};
+
+	self.confirmPassword = function(Parse, req, res) {
+		newPassword = req.body.password;
+		var User = new Parse.User();
+		var query = new Parse.Query(User);
+		query.get(req.body.objectId, {
+			success : function(user) {
+				Parse.Cloud.useMasterKey();
+				user.setPassword(newPassword);
+				user.save(null, {
+					useMasterKey : true
+				}).then(
+						res.send("Finished. <br><a href='" + adminUrl
+								+ "'>Login here</a>"));
+			},
+			error : function(user, error) {
+				console.log("User logged in failed: " + error.message);
+				res.send("failed");
+			}
+		});
 	};
 };
 

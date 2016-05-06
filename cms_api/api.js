@@ -11,7 +11,7 @@ var express = require('express');
 var app = express();
 var parserServerPort = ":1337";
 var Parse = require('parse/node');
-Parse.initialize("myAppId");
+Parse.initialize("myAppId", '', 'master');
 Parse.serverURL = parseServerLocation + '/parse';
 
 var signUpTemplateId = "a4fe974f-6240-4af8-b629-3a1e1a037076";
@@ -80,6 +80,7 @@ app.get('/login/:userName/:password', function(req, res, next) {
 });
 
 app.get('/resetPassword/:userName', function(req, res, next) {
+	console.log("UserName: ");
 	var userRepositoryInstance = new userRepository();
 	userRepositoryInstance.resetPassword(Parse, req.params['userName'], res);
 });
@@ -194,6 +195,11 @@ app.post('/newUser', function(req, res) {
 	console.log(output);
 });
 
+app.post('/confirmPassword', function(req, res) {
+	var userRepositoryInstance = new userRepository();
+	var output = userRepositoryInstance.confirmPassword(Parse, req, res);
+});
+
 app.post('/updateItem/:repository', function(req, res) {
 	console.log("Profle pic: " + req.body.profilePic);
 	var contentRepositoryInstance = new contentRepository();
@@ -213,6 +219,7 @@ app.post('/fileUpload', function(req, res) {
 	fileRepo.set("file", file);
 	fileRepo.save(null, {
 		success : function(fileRepo) {
+			console.log("File upladed: " + fileRepo.get("file").url());
 			res.send(fileRepo.get("file").url());
 		},
 		error : function(userRepo, error) {
