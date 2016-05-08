@@ -125,6 +125,20 @@ var contentRepository = function() {
 		});
 	};
 
+	self.getCategoryList = function(Parse, isAdminCategoryIncluded, req, res) {
+		var Categories = Parse.Object.extend("category");
+		var query = new Parse.Query(Categories);
+		query.equalTo('isAdminOnlyCategory', isAdminCategoryIncluded);
+		query.find({
+			success : function(results) {
+				res.send(results);
+			},
+			error : function(error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+	};
+
 	self.getContentsInfo = function(Parse, categoryId, page, from, max,
 			authorId, showOnlyApproved, isFeatureImageRequired, req, res) {
 		console.log("Received page: " + page);
@@ -221,6 +235,22 @@ var contentRepository = function() {
 		query.get(contentId, {
 			success : function(gameScore) {
 				gameScore.set("status", toStatus);
+				gameScore.save();
+				res.send(toStatus);
+			},
+			error : function(object, error) {
+				res.send("ERROR");
+			}
+		});
+	};
+
+	self.isFeatured = function(Parse, userApiKey, contentId, toStatus, req, res) {
+		console.log("User API: " + userApiKey);
+		var GameScore = Parse.Object.extend("content");
+		var query = new Parse.Query(GameScore);
+		query.get(contentId, {
+			success : function(gameScore) {
+				gameScore.set("isFeatured", toStatus);
 				gameScore.save();
 				res.send(toStatus);
 			},

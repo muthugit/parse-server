@@ -2,6 +2,7 @@
 var userRepository = require("./user.js");
 var contentRepository = require("./content.js");
 var emailRepository = require("./email.js");
+var themeRepository = require("./theme.js");
 var localConfig = require("./localConfig.js");
 
 var localConfigInstance = new localConfig();
@@ -165,6 +166,12 @@ app.get('/getCategoryContents/:categoryId', function(req, res, next) {
 			req.params['categoryId'], req, res);
 });
 
+app.get('/getCategoryList/:isAdminCategoryIncluded', function(req, res, next) {
+	var contentRepositoryInstance = new contentRepository();
+	contentRepositoryInstance.getCategoryList(Parse,
+			req.params['isAdminCategoryIncluded'], req, res);
+});
+
 app.get('/getSiteUsers/:categoryId/:page/:from/:max', function(req, res, next) {
 	var userRepositoryInstance = new userRepository();
 	userRepositoryInstance
@@ -179,6 +186,14 @@ app.get('/approveContent/:userApiKey/:contentId/:toStatus', function(req, res,
 			req.params['contentId'], req.params['toStatus'], req, res);
 });
 
+app.get('/isFeatured/:userApiKey/:contentId/:toStatus',
+		function(req, res, next) {
+			var contentRepositoryInstance = new contentRepository();
+			contentRepositoryInstance.isFeatured(Parse,
+					req.params['userApiKey'], req.params['contentId'],
+					req.params['toStatus'], req, res);
+		});
+
 app.param('userId', function(req, res, next, id) {
 	res.send(id);
 	next();
@@ -186,6 +201,11 @@ app.param('userId', function(req, res, next, id) {
 
 app.get('/userExist/:userId', function(req, res, next) {
 	next();
+});
+
+app.get('/getHtmlBlocks/:blockId', function(req, res, next) {
+	var themeRepositoryInstance = new themeRepository();
+	themeRepositoryInstance.getHtmlBlock(Parse, req, res);
 });
 
 // --------------- POST REQUESTS
@@ -245,6 +265,11 @@ app.post('/newAdminGenericContent', function(req, res) {
 	var output = contentRepositoryInstance.addAdminFormContent(Parse, req, res,
 			repository);
 	console.log(output);
+});
+
+app.post('/saveHtmlBlocks', function(req, res) {
+	var themeRepositoryInstance = new themeRepository();
+	var output = themeRepositoryInstance.saveHtmlBlocks(Parse, req, res);
 });
 
 // ------ SAMPLE CODES ------------ //
