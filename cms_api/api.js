@@ -142,11 +142,11 @@ app.get('/getGenericContentsById/:repository/:objectId', function(req, res,
 
 app
 		.get(
-				'/getSiteContents/:categoryId/:page/:from/:max/:authorId/:featureImageRequired',
+				'/getSiteContents/:categoryId/:typeOfContent/:from/:max/:authorId/:featureImageRequired',
 				function(req, res, next) {
 					var contentRepositoryInstance = new contentRepository();
 					contentRepositoryInstance.getContentsInfo(Parse,
-							req.params['categoryId'], req.params['page'],
+							req.params['categoryId'], req.params['typeOfContent'],
 							req.params['from'], req.params['max'],
 							req.params['authorId'], true,
 							req.params['featureImageRequired'], req, res);
