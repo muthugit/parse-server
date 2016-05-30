@@ -286,12 +286,25 @@ var contentRepository = function() {
 		itemRepo.id = req.body['objectId'];
 		itemRepo.save(req.body, {
 			success : function(itemResponse) {
-				console.log("Updated==============");
 				res.send(itemResponse);
 			},
 			error : function(itemResponse, error) {
 				console.log("Error==> " + error);
 				res.send("ERROR");
+			}
+		});
+	};
+
+	self.find = function(Parse, repository, item, content, req, res) {
+		var Contents = Parse.Object.extend(repository);
+		var query = new Parse.Query(Contents);
+		query.equalTo(item, content);
+		query.find({
+			success : function(results) {
+				res.send(results);
+			},
+			error : function(error) {
+				console.log("Error: " + error.code + " " + error.message);
 			}
 		});
 	};

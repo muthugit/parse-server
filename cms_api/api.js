@@ -146,9 +146,9 @@ app
 				function(req, res, next) {
 					var contentRepositoryInstance = new contentRepository();
 					contentRepositoryInstance.getContentsInfo(Parse,
-							req.params['categoryId'], req.params['typeOfContent'],
-							req.params['from'], req.params['max'],
-							req.params['authorId'], true,
+							req.params['categoryId'],
+							req.params['typeOfContent'], req.params['from'],
+							req.params['max'], req.params['authorId'], true,
 							req.params['featureImageRequired'], req, res);
 				});
 
@@ -208,6 +208,14 @@ app.get('/getHtmlBlocks/:blockId', function(req, res, next) {
 	themeRepositoryInstance.getHtmlBlock(Parse, req, res);
 });
 
+app.get('/find/:repository/:searchItem/:searchContent',
+		function(req, res, next) {
+			var contentRepositoryInstance = new contentRepository();
+			contentRepositoryInstance.find(Parse, req.params['repository'],
+					req.params['searchItem'], req.params['searchContent'], req,
+					res);
+		});
+
 // --------------- POST REQUESTS
 app.post('/newUser', function(req, res) {
 	var userRepositoryInstance = new userRepository();
@@ -221,7 +229,6 @@ app.post('/confirmPassword', function(req, res) {
 });
 
 app.post('/updateItem/:repository', function(req, res) {
-	console.log("Profle pic: " + req.body.profilePic);
 	var contentRepositoryInstance = new contentRepository();
 	var output = contentRepositoryInstance.updateItem(Parse,
 			req.params['repository'], req, res);
