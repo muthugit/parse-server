@@ -50,6 +50,7 @@ var contentRepository = function() {
 			postRepo.set("description", req.body.description);
 			postRepo.set("featureImageURL", req.body.featureImageURL);
 			postRepo.save();
+			res.send("Post updated: id===> " + req.body.objectId);
 		} else {
 			postRepo.save(req.body, {
 				success : function(userRepo) {
