@@ -11,18 +11,26 @@ var contentRepository = function() {
 				var Post = Parse.Object.extend("content");
 				var postRepo = new Post();
 
+				if (typeof req.body.objectId != 'undefined') {
+					postRepo.set("id", req.body.objectId);
+				}
+
 				postRepo.set("userItem", userData);
 				postRepo.set("status", "Pending");
 
 				var User = Parse.Object.extend("category");
 				var query = new Parse.Query(User);
+
 				query.get(req.body.categoryItem, {
 					success : function(categoryData) {
+						console.log("Saving");
 						postRepo.set("categoryItemData", categoryData);
-						cr.saveItem(postRepo, req, res);
+						postRepo.set("categoryItem", req.body.categoryItem);
+						cr.saveItem(Parse, postRepo, req, res);
 					},
 					error : function(categoryData, error) {
-						cr.saveItem(postRepo, req, res);
+						console.log("Error but saving");
+						cr.saveItem(Parse, postRepo, req, res);
 					}
 				});
 			},
@@ -33,16 +41,27 @@ var contentRepository = function() {
 
 	};
 
-	self.saveItem = function(postRepo, req, res) {
-		postRepo.save(req.body, {
-			success : function(userRepo) {
-				res.send("Post created: id===> " + userRepo.id);
-			},
-			error : function(userRepo, error) {
-				console.log("Error==> " + error);
-				res.send("ERROR");
-			}
-		});
+	self.saveItem = function(Parse, postRepo, req, res) {
+		console.log("Item==>" + JSON.stringify(postRepo));
+		if (typeof req.body.objectId != 'undefined') {
+			console.log("Post detail========> " + req.body.content);
+			postRepo.set("title", req.body.title);
+			postRepo.set("postDetail", req.body.content);
+			postRepo.set("description", req.body.description);
+			postRepo.set("featureImageURL", req.body.featureImageURL);
+			postRepo.save();
+		} else {
+			postRepo.save(req.body, {
+				success : function(userRepo) {
+					res.send("Post created: id===> " + userRepo.id);
+				},
+				error : function(userRepo, error) {
+					console.log("Error==> " + JSON.stringify(error));
+					console.log("EEEEE=>" + JSON.stringify(userRepo));
+					res.send("ERROR");
+				}
+			});
+		}
 	};
 
 	self.addAdminFormContent = function(Parse, req, res, repository) {
@@ -209,7 +228,7 @@ var contentRepository = function() {
 				res.send(results);
 			},
 			error : function(error) {
-				console.log("Error: " + error.code + " " + error.message);
+				console.log("Error: " + error);
 			}
 		});
 	};

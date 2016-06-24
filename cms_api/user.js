@@ -180,8 +180,8 @@ var userRepository = function() {
 				user.save(null, {
 					useMasterKey : true
 				}).then(
-						res.send("Finished. <br><a href='" + adminUrl
-								+ "'>Login here</a>"));
+						res.send("<center><h1>Password saved successfully. <br><a href='" + adminUrl
+								+ "'>Click here to Login.</a></h1>"));
 			},
 			error : function(user, error) {
 				console.log("User logged in failed: " + error.message);
