@@ -189,6 +189,26 @@ var userRepository = function() {
 			}
 		});
 	};
+	
+	self.changePassword = function(Parse, req, res) {
+		newPassword = req.body.newPassword;
+		oldPassword = req.body.oldPassword;
+		userName=req.body.email;
+		Parse.User.logIn(userName, oldPassword, {
+			success : function(user) {
+				Parse.Cloud.useMasterKey();
+				user.setPassword(newPassword);
+				user.save(null, {
+					useMasterKey : true
+				}).then(
+						res.send("1"));
+			},
+			error : function(user, error) {
+				console.log("User logged in failed");
+				res.send("0");
+			}
+		});
+	};
 };
 
 module.exports = userRepository;

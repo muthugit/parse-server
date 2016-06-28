@@ -225,7 +225,12 @@ app.post('/newUser', function(req, res) {
 
 app.post('/confirmPassword', function(req, res) {
 	var userRepositoryInstance = new userRepository();
-	var output = userRepositoryInstance.confirmPassword(Parse, req, res);
+	userRepositoryInstance.confirmPassword(Parse, req, res);
+});
+
+app.post('/changePassword', function(req, res) {
+	var userRepositoryInstance = new userRepository();
+	userRepositoryInstance.changePassword(Parse, req, res);
 });
 
 app.post('/updateItem/:repository', function(req, res) {
