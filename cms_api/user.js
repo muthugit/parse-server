@@ -35,8 +35,8 @@ var userRepository = function() {
 									// password);
 									resetPasswordUrl = resetPasswordUrlPrefix
 											+ user.id;
-									self.resetPasswordNotification(req.body.email,
-											resetPasswordUrl,
+									self.resetPasswordNotification(
+											req.body.email, resetPasswordUrl,
 											"Its time to set the password");
 									res.send("User created");
 								},
@@ -132,12 +132,14 @@ var userRepository = function() {
 				query.find({
 					success : function(userData) {
 						console.log("User Found: " + userData[0]);
-						res.send(userData[0]);
 					},
 					error : function(userData, error) {
 						console.log("User logged in failed");
 						res.send("failed");
 					}
+				}).then(function(userData) {
+					var object = userData[0];
+					res.send(object);
 				});
 
 				// res.send(user.id);
@@ -170,6 +172,8 @@ var userRepository = function() {
 	};
 
 	self.confirmPassword = function(Parse, req, res) {
+		var message = "<center><h1>Password saved successfully. <br><a href='"
+				+ adminUrl + "'>Click here to Login.</a></h1>";
 		newPassword = req.body.password;
 		var User = new Parse.User();
 		var query = new Parse.Query(User);
@@ -179,9 +183,7 @@ var userRepository = function() {
 				user.setPassword(newPassword);
 				user.save(null, {
 					useMasterKey : true
-				}).then(
-						res.send("<center><h1>Password saved successfully. <br><a href='" + adminUrl
-								+ "'>Click here to Login.</a></h1>"));
+				}).then(res.send(message));
 			},
 			error : function(user, error) {
 				console.log("User logged in failed: " + error.message);
@@ -189,23 +191,71 @@ var userRepository = function() {
 			}
 		});
 	};
-	
+
 	self.changePassword = function(Parse, req, res) {
 		newPassword = req.body.newPassword;
 		oldPassword = req.body.oldPassword;
-		userName=req.body.email;
+		userName = req.body.email;
 		Parse.User.logIn(userName, oldPassword, {
 			success : function(user) {
 				Parse.Cloud.useMasterKey();
 				user.setPassword(newPassword);
 				user.save(null, {
 					useMasterKey : true
-				}).then(
-						res.send("1"));
+				}).then(res.send("1"));
 			},
 			error : function(user, error) {
 				console.log("User logged in failed");
 				res.send("0");
+			}
+		});
+	};
+
+	self.followUser = function(Parse, followerId, followingId, addOrRemove,
+			req, res) {
+		var User = Parse.Object.extend("users");
+		var followerQuery = new Parse.Query(User);
+		var followingQuery = new Parse.Query(User);
+		followingQuery.get(followingId, {
+			success : function(following) {
+				followerQuery.get(followerId, {
+					success : function(follower) {
+						var followerRelation = follower.relation("followings");
+						if (addOrRemove == "add")
+							followerRelation.add(following);
+						else
+							followerRelation.remove(following);
+						follower.save(null, {
+							success : function(followerSaved) {
+								followerRelation.query().find({
+									success : function(followingList) {
+										res.send(followingList);
+									}
+								});
+							}
+						});
+					}
+				});
+			},
+			error : function(object, error) {
+				res.send("API ERROR");
+			}
+		});
+	};
+
+	self.getUserFollowingList = function(Parse, req, res, followerId) {
+		var User = Parse.Object.extend("users");
+		var followerQuery = new Parse.Query(User);
+		console.log("Follower id: " + followerId);
+		followerQuery.get(followerId, {
+			success : function(follower) {
+				var followerRelation = follower.relation("followings");
+				followerRelation.query().find({
+					success : function(followingList) {
+						res.send(followingList);
+						console.log(JSON.stringify(followingList));
+					}
+				});
 			}
 		});
 	};

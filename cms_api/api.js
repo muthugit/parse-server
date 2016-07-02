@@ -216,6 +216,19 @@ app.get('/find/:repository/:searchItem/:searchContent',
 					res);
 		});
 
+app.get('/followUser/:followerId/:followingId/:addOrRemove', function(req, res,
+		next) {
+	var userRepositoryInstance = new userRepository();
+	userRepositoryInstance.followUser(Parse, req.params['followerId'],
+			req.params['followingId'], req.params['addOrRemove'], req, res);
+});
+
+app.get('/getUserFollowingList/:followerId', function(req, res, next) {
+	var userRepositoryInstance = new userRepository();
+	userRepositoryInstance.getUserFollowingList(Parse, req, res,
+			req.params['followerId']);
+});
+
 // --------------- POST REQUESTS
 app.post('/newUser', function(req, res) {
 	var userRepositoryInstance = new userRepository();
