@@ -148,16 +148,16 @@ app
 					contentRepositoryInstance.getContentsInfo(Parse,
 							req.params['categoryId'],
 							req.params['typeOfContent'], req.params['from'],
-							req.params['max'], req.params['authorId'], true,
+							req.params['max'], req.params['authorId'], "Approved",
 							req.params['featureImageRequired'], req, res);
 				});
 
-app.get('/getMyContents/:categoryId/:page/:from/:max/:authorId', function(req,
+app.get('/getMyContents/:categoryId/:page/:from/:max/:authorId/:postStatus', function(req,
 		res, next) {
 	var contentRepositoryInstance = new contentRepository();
 	contentRepositoryInstance.getContentsInfo(Parse, req.params['categoryId'],
 			req.params['page'], req.params['from'], req.params['max'],
-			req.params['authorId'], false, false, req, res);
+			req.params['authorId'], req.params['postStatus'], false, req, res);
 });
 
 app.get('/getCategoryContents/:categoryId', function(req, res, next) {

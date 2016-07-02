@@ -160,9 +160,9 @@ var contentRepository = function() {
 	};
 
 	self.getContentsInfo = function(Parse, categoryId, typeOfContent, from,
-			max, authorId, showOnlyApproved, isFeatureImageRequired, req, res) {
+			max, authorId, postStatus, isFeatureImageRequired, req, res) {
 		// typeOfContent ==> 1 -> all; 2-> featureonly
-		console.log("Received page: " + typeOfContent);
+		console.log("Post status: " + postStatus);
 		var Contents = Parse.Object.extend("content");
 		var query = new Parse.Query(Contents);
 		query.limit(parseInt(max));
@@ -170,8 +170,8 @@ var contentRepository = function() {
 			query.equalTo('userApi', authorId);
 		if (categoryId != 'any')
 			query.equalTo('categoryItem', categoryId);
-		if (showOnlyApproved == true)
-			query.equalTo('status', 'Approved');
+		if (postStatus != 'all')
+			query.equalTo('status', postStatus);
 		if (isFeatureImageRequired == "true") {
 			query.notEqualTo('featureImageURL', "");
 		}
@@ -184,6 +184,7 @@ var contentRepository = function() {
 		query.include('categoryItemData');
 		query.find({
 			success : function(results) {
+				console.log(results);
 				res.send(results);
 			},
 			error : function(error) {
