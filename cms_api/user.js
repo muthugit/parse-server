@@ -243,6 +243,22 @@ var userRepository = function() {
 		});
 	};
 
+	self.changeUserType = function(Parse, req, res, userApi, userId,
+			newUserType) {
+		var User = Parse.Object.extend("users");
+		var followerQuery = new Parse.Query(User);
+		followerQuery.get(userId, {
+			success : function(userObj) {
+				userObj.set("userType", newUserType);
+				userObj.save(null, {}).then(console.log("1"));
+			},
+			error : function(user, error) {
+				console.log("User logged in failed");
+				console.log("0");
+			}
+		});
+	};
+
 	self.getUserFollowingList = function(Parse, req, res, followerId) {
 		var User = Parse.Object.extend("users");
 		var followerQuery = new Parse.Query(User);
