@@ -23,6 +23,7 @@ var trackRepository = function() {
 	self.savetrack = function(trackObj, object) {
 		console.log("Updating: " + object['id']);
 		trackObj.set("permalink", object['permalink']);
+		trackObj.set("permalink_url", object['permalink_url']);
 		trackObj.set("description", object['description']);
 		trackObj.set("imageUrl", object['artwork_url']);
 		trackObj.set("title", object['title']);
@@ -43,7 +44,8 @@ var trackRepository = function() {
 	self.getTracksByTag = function(Parse, tag, req, res) {
 		var Track = Parse.Object.extend("audioTrack");
 		var trackQuery = new Parse.Query(Track);
-		trackQuery.contains("tags", tag);
+		if (tag != "all")
+			trackQuery.contains("tags", tag);
 		trackQuery.descending("created");
 		trackQuery.find({
 			success : function(trackResponse) {
