@@ -16,8 +16,9 @@ Parse.serverURL = parseServerLocation + '/parse';
 
 var urlPrefix = "https://w.soundcloud.com/player/?url=https://api.soundcloud.com/tracks/";
 var categoryUrl = "http://api.soundcloud.com/resolve.json?url=https://soundcloud.com/user-370818869/sets&client_id=9639f1b1ab7ab68f09a9bda6c457987c";
-//var tracksUrl = "https://api.soundcloud.com/users/238324753/tracks.json?client_id=9639f1b1ab7ab68f09a9bda6c457987c&limit=100";
-var tracksUrl="http://api.soundcloud.com/resolve.json?url=https://soundcloud.com/user-370818869/tracks&client_id=9639f1b1ab7ab68f09a9bda6c457987c&limit=1";
+// var tracksUrl =
+// "https://api.soundcloud.com/users/238324753/tracks.json?client_id=9639f1b1ab7ab68f09a9bda6c457987c&limit=100";
+var tracksUrl = "http://api.soundcloud.com/resolve.json?url=https://soundcloud.com/user-370818869/tracks&client_id=9639f1b1ab7ab68f09a9bda6c457987c&limit=1";
 var http = require('http');
 var request = require("request");
 
@@ -82,6 +83,12 @@ app.get('/get/tracksByTag/:tag', function(req, res) {
 	var trackRepoInstance = new trackRepository();
 	var tag = req.params["tag"];
 	trackRepoInstance.getTracksByTag(Parse, tag, req, res);
+});
+
+app.get('/getTrackContent/:trackId', function(req, res) {
+	var trackRepoInstance = new trackRepository();
+	var trackId = req.params["trackId"];
+	trackRepoInstance.getTrackById(Parse, trackId, req, res);
 });
 
 app.listen(9991, function() {

@@ -53,5 +53,19 @@ var trackRepository = function() {
 			}
 		});
 	};
+
+	self.getTrackById = function(Parse, trackId, req, res) {
+		console.log("TrackId: " + trackId);
+		var Track = Parse.Object.extend("audioTrack");
+		var trackQuery = new Parse.Query(Track);
+		if (trackId != "all")
+			trackQuery.contains("permalink", trackId);
+		trackQuery.descending("created");
+		trackQuery.find({
+			success : function(trackResponse) {
+				res.send(trackResponse[0]);
+			}
+		});
+	};
 };
 module.exports = trackRepository;
